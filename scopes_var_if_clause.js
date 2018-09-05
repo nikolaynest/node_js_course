@@ -6,7 +6,7 @@ if(true) {
 }
 console.log(x);//will be bar
 
-//result:
+//console
 //foo/undefined
 //bar
 //bar
