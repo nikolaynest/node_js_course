@@ -1,52 +1,33 @@
 const gitHubUrl = 'https://api.github.com/';
-const otherParams = {
-    headers: {
-        "content-type": "application/json; charset=UTF-8",
-        "Accept": "application/vnd.github.v3+json"
-    },
-    method: "GET"
-};
 
-function getContributors(repo) {
+function getContributors(repo, repoNumbers) {
     const repoUrl = gitHubUrl + 'orgs/' + repo + '/repos';
     console.log('repoURL:', repoUrl);
-    const fetchedRepos = fetch(repoUrl, otherParams)
+    const fetchedRepos = fetch(repoUrl)
         .then((response) => {
             return response.json();
         })
-        .then((result) => {
-            // console.log("first result:", result);
-            return result;
-        })
         .then((repos) => {
-            for (let i = 0; i < 3; i++) {
-                // console.log(repos[i]);
-                const {contributors_url} = repos[i];
-                const {name} = repos[i];
-                // console.log(contributors_url);
+            for (let i = 0; i < repoNumbers; i++) {
+                const {contributors_url, name} = repos[i];
                 contributor_info(contributors_url, name);
             }
         })
         .catch((error) => {
             console.log("BAD!", error);
         });
-    // console.log("fetchedRepos:", fetchedRepos);
 }
 
 const repoContribMap = new Map();
 
 function contributor_info(contributor_url, contributors_name) {
-    fetch(contributor_url, otherParams)
+    fetch(contributor_url)
         .then((response) => {
             return response.json();
         })
         .then((result) => {
-            // console.log("result", result);
-
-            // console.log("result values:", result.values());
             let contrib = new Array();
             for (const {login} of result) {
-                // console.log(login);
                 contrib.push(login);
             }
             repoContribMap.set(contributors_name, contrib);
@@ -57,5 +38,5 @@ function contributor_info(contributor_url, contributors_name) {
         })
 }
 
-getContributors('nodejs');
+getContributors('nodejs', 3);
 console.log("map:", repoContribMap);
